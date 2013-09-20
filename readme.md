@@ -26,10 +26,11 @@ var app = {
 };
 
 var modules = [
-  './modules/sync',
-  './modules/async',
+  {name: 'sync1', path: './modules/sync', config: {a: 2}},
+  {name: 'async', path: './modules/async'},
+  {name: 'sync2', path: './modules/sync'},
   // Same as ./node_modules/npm-module
-  'npm-module'
+  {name: 'npm-module', path: 'npm-module'}
 ];
 
 require('h5.main').main(app, modules);
@@ -37,35 +38,33 @@ require('h5.main').main(app, modules);
 
 `./modules/sync.js`:
 ```js
-exports.start = function(app)
-{
-  app.syncModule = {};
+exports.DEFAULT_CONFIG = {
+  a: 1
+};
 
-  app.broker.subscribe('modules.started')
-    .setLimit(1)
-    .setFilter(function(moduleName) { return moduleName === 'async' })
-    .on('message', function()
-    {
-      app.debug("Hello from sync after async started!");
-    });
+exports.start = function(app, module)
+{
+  app.setUpExternalModule('async', function()
+  {
+    app.debug("Hello from %s after async started!", module.name);
+    module.debug("a^2=%d", Math.pow(module.config.a, 2));
+  });
 };
 ```
 
 `./modules/async.js`:
 ```js
-exports.start = function(app, done)
+exports.start = function(app, module, done)
 {
-  app.asyncModule = {};
-
   setTimeout(done, 1000);
 };
 ```
 
 `./node_modules/npm-module/index.js`:
 ```js
-exports.start = function(app)
+exports.start = function(app, module)
 {
-  app.npmModule = {};
+
 };
 ```
 
@@ -76,11 +75,16 @@ node ./main.js
 
 Expected output:
 ```
-info    13-07-25 15:01:18.439+02   Starting...
-debug   13-07-25 15:01:18.451+02   sync module starting synchronously...
-debug   13-07-25 15:01:18.451+02   async module starting asynchronously...
-debug   13-07-25 15:01:19.463+02   npm-module module starting synchronously...
-info    13-07-25 15:01:19.464+02   Started the development environment in 1036 ms
+info  13-09-20 20:29:35.198+02 Starting...
+debug 13-09-20 20:29:35.216+02 sync1 module starting synchronously...
+debug 13-09-20 20:29:35.217+02 async module starting asynchronously...
+debug 13-09-20 20:29:36.229+02 Hello from sync1 after async started!
+debug 13-09-20 20:29:36.229+02 [sync1] a^2=4
+debug 13-09-20 20:29:36.229+02 sync2 module starting synchronously...
+debug 13-09-20 20:29:36.230+02 Hello from sync2 after async started!
+debug 13-09-20 20:29:36.230+02 [sync2] a^2=1
+debug 13-09-20 20:29:36.233+02 npm-module module starting synchronously...
+info  13-09-20 20:29:36.233+02 Started the development environment in 1053 ms
 ```
 
 ## TODO
