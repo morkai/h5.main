@@ -42,6 +42,11 @@ exports.DEFAULT_CONFIG = {
   a: 1
 };
 
+exports.setUp = function(app, module)
+{
+  app.debug("Setting up %s...", module.name);
+};
+
 exports.start = function(app, module)
 {
   app.setUpExternalModule('async', function()
@@ -54,6 +59,12 @@ exports.start = function(app, module)
 
 `./modules/async.js`:
 ```js
+
+exports.setUp = function(app, module)
+{
+  app.debug("Setting up %s...", module.name);
+};
+
 exports.start = function(app, module, done)
 {
   setTimeout(done, 1000);
@@ -62,6 +73,12 @@ exports.start = function(app, module, done)
 
 `./node_modules/npm-module/index.js`:
 ```js
+
+exports.setUp = function(app, module)
+{
+  app.debug("Setting up %s...", module.name);
+};
+
 exports.start = function(app, module)
 {
 
