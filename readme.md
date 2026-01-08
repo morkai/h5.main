@@ -2,8 +2,6 @@
 
 Module starter for Node.js applications.
 
-[![Build Status](https://travis-ci.org/morkai/h5.main.png?branch=master)](https://travis-ci.org/morkai/h5.main)
-
 ## Example
 
 ```
@@ -14,7 +12,7 @@ Create the following files:
 
 `./main.js`:
 ```js
-var app = {
+const app = {
   options: {
     // Will process.exit(1) if a module doesn't call done() in the specified time
     moduleStartTimeout: 2000,
@@ -25,7 +23,7 @@ var app = {
   }
 };
 
-var modules = [
+const modules = [
   {name: 'sync1', path: './modules/sync', config: {a: 2}},
   {name: 'async', path: './modules/async'},
   {name: 'sync2', path: './modules/sync'},
@@ -42,30 +40,29 @@ exports.DEFAULT_CONFIG = {
   a: 1
 };
 
-exports.setUp = function(app, module)
+exports.setUp = (app, module) =>
 {
-  app.debug("Setting up %s...", module.name);
+  app.debug(`Setting up ${module.name}...`);
 };
 
-exports.start = function(app, module)
+exports.start = (app, module) =>
 {
-  app.setUpExternalModule('async', function()
+  app.setUpExternalModule('async', () =>
   {
-    app.debug("Hello from %s after async started!", module.name);
-    module.debug("a^2=%d", Math.pow(module.config.a, 2));
+    app.debug(`Hello from ${module.name} after async started!`);
+    module.debug(`a^2=${Math.pow(module.config.a, 2)}`);
   });
 };
 ```
 
 `./modules/async.js`:
 ```js
-
-exports.setUp = function(app, module)
+exports.setUp = (app, module) =>
 {
-  app.debug("Setting up %s...", module.name);
+  app.debug(`Setting up ${module.name}...`);
 };
 
-exports.start = function(app, module, done)
+exports.start = (app, module, done) =>
 {
   setTimeout(done, 1000);
 };
@@ -73,13 +70,12 @@ exports.start = function(app, module, done)
 
 `./node_modules/npm-module/index.js`:
 ```js
-
-exports.setUp = function(app, module)
+exports.setUp = (app, module) =>
 {
-  app.debug("Setting up %s...", module.name);
+  app.debug(`Setting up ${module.name}...`);
 };
 
-exports.start = function(app, module)
+exports.start = (app, module) =>
 {
 
 };

@@ -20,9 +20,9 @@
     "url": "http://github.com/morkai/h5.main.git"
   },
   "engines": {
-    "node": ">=10.0.0 <11.0.0"
+    "node": ">=24"
   },
-  "main": "./lib/index",
+  "main": "./lib/index.js",
   "dependencies": {
     "h5.pubsub": "morkai/h5.pubsub",
     "h5.step": "morkai/h5.step"
